@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    height: 100%;
+  }
+
+  body {
+    @apply bg-black text-white antialiased;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* Hide cursor globally on desktop when custom cursor is active */
+  html.custom-cursor-active *,
+  html.custom-cursor-active {
+    cursor: none !important;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
