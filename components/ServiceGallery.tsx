@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import SectionNavigation from "./SectionNavigation";
@@ -12,16 +12,90 @@ interface ServiceGalleryProps {
   title: string;
 }
 
+interface MediaItem {
+  type: "image" | "video";
+  src: string;
+  index: number;
+}
+
 export default function ServiceGallery({ id, title }: ServiceGalleryProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
-  // Generate placeholder image paths - using placeholder service for dummy images
-  // Each service gets unique images based on ID
-  const serviceHash = id.split('-').reduce((acc, word) => acc + word.charCodeAt(0), 0);
-  const images = Array.from({ length: 6 }, (_, i) => 
-    `https://picsum.photos/seed/${serviceHash + i}/800/800`
-  );
+  // Track media type for each slot (image or video)
+  // Default to undefined - will be set when media loads
+  const [mediaTypes, setMediaTypes] = useState<Record<number, "image" | "video">>({});
+
+  // Helper to get file paths for a slot
+  const getMediaPaths = (index: number) => {
+    const itemNumber = index + 1;
+    return {
+      image: `/images/${id}-${itemNumber}.png`,
+      imageJpg: `/images/${id}-${itemNumber}.jpg`,
+      videoMp4: `/images/${id}-${itemNumber}.mp4`,
+      videoWebm: `/images/${id}-${itemNumber}.webm`,
+    };
+  };
+
+  // Check for videos when section comes into view
+  useEffect(() => {
+    if (!isInView) return;
+
+    const checkForVideos = async () => {
+      for (let i = 0; i < 6; i++) {
+        const paths = getMediaPaths(i);
+        
+        // Check if video exists by trying to load it
+        const checkVideo = (src: string): Promise<boolean> => {
+          return new Promise((resolve) => {
+            const video = document.createElement("video");
+            video.preload = "metadata";
+            video.onloadedmetadata = () => resolve(true);
+            video.onerror = () => resolve(false);
+            video.src = src;
+            setTimeout(() => resolve(false), 500); // Timeout after 500ms
+          });
+        };
+
+        const hasMp4 = await checkVideo(paths.videoMp4);
+        if (hasMp4) {
+          setMediaTypes((prev) => ({ ...prev, [i]: "video" }));
+        } else {
+          const hasWebm = await checkVideo(paths.videoWebm);
+          if (hasWebm) {
+            setMediaTypes((prev) => ({ ...prev, [i]: "video" }));
+          }
+          // If no video, image will be shown by default
+        }
+      }
+    };
+
+    checkForVideos();
+  }, [id, isInView]);
+
+  // Auto-play videos when section comes into view
+  useEffect(() => {
+    if (!isInView) return;
+
+    // Play all videos when section is visible
+    videoRefs.current.forEach((video, index) => {
+      if (video && mediaTypes[index] === "video") {
+        video.play().catch(() => {
+          // Autoplay might be blocked by browser, that's okay
+        });
+      }
+    });
+
+    return () => {
+      // Pause videos when section is out of view (optional - for performance)
+      videoRefs.current.forEach((video) => {
+        if (video) {
+          video.pause();
+        }
+      });
+    };
+  }, [isInView, mediaTypes]);
 
   return (
     <section
@@ -33,31 +107,92 @@ export default function ServiceGallery({ id, title }: ServiceGalleryProps) {
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/5 rounded-full blur-3xl"></div>
 
       <div className="max-w-7xl mx-auto relative z-10 w-full">
-        {/* Image Gallery Grid */}
+        {/* Media Gallery Grid - Supports both images and videos */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
           transition={{ duration: 0.8 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
         >
-          {images.map((image, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-              className="relative aspect-square overflow-hidden rounded-xl group cursor-pointer"
-            >
-              <Image
-                src={image}
-                alt={`${title} - Image ${index + 1}`}
-                fill
-                className="object-cover group-hover:scale-110 transition-transform duration-500"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              />
-              <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/10 transition-all duration-300"></div>
-            </motion.div>
-          ))}
+          {Array.from({ length: 6 }, (_, index) => {
+            const paths = getMediaPaths(index);
+            const isVideo = mediaTypes[index] === "video";
+            
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+                className="relative aspect-square overflow-hidden rounded-xl group cursor-pointer"
+                data-media-index={index}
+              >
+                {/* Video - shown if video type is detected */}
+                {isVideo && (
+                  <>
+                    <video
+                      ref={(el) => {
+                        videoRefs.current[index] = el;
+                        // Auto-play video when it loads
+                        if (el && isInView) {
+                          el.play().catch(() => {
+                            // Autoplay might be blocked, that's okay
+                          });
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="auto"
+                      onError={() => {
+                        // If video fails, switch to image
+                        setMediaTypes((prev) => {
+                          const newTypes = { ...prev };
+                          delete newTypes[index];
+                          return newTypes;
+                        });
+                      }}
+                    >
+                      <source src={paths.videoMp4} type="video/mp4" />
+                      <source src={paths.videoWebm} type="video/webm" />
+                    </video>
+                    {/* Subtle hover overlay */}
+                    <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/5 transition-all duration-300 pointer-events-none"></div>
+                  </>
+                )}
+                
+                {/* Image - shown by default or if video fails */}
+                {!isVideo && (
+                  <>
+                    <Image
+                      src={paths.image}
+                      alt={`${title} - Image ${index + 1}`}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      onError={(e) => {
+                        // Try .jpg if .png doesn't exist
+                        const target = e.target as HTMLImageElement;
+                        if (target.src.includes(".png")) {
+                          target.src = paths.imageJpg;
+                        }
+                        // If both image formats fail, video check will happen on video error
+                      }}
+                      onLoad={() => {
+                        // Image loaded successfully - ensure type is set
+                        if (mediaTypes[index] !== "image") {
+                          setMediaTypes((prev) => ({ ...prev, [index]: "image" }));
+                        }
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/10 transition-all duration-300"></div>
+                  </>
+                )}
+              </motion.div>
+            );
+          })}
         </motion.div>
 
         {/* View More Button */}
@@ -67,14 +202,17 @@ export default function ServiceGallery({ id, title }: ServiceGalleryProps) {
           transition={{ duration: 0.8, delay: 0.8 }}
           className="flex justify-center"
         >
-          <motion.button
+          <motion.a
+            href="https://www.instagram.com/firefliescreativetechnologies/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="group px-8 py-4 bg-transparent border-2 border-accent text-accent font-semibold rounded-full text-lg hover:bg-accent hover:text-black transition-all duration-300 flex items-center gap-2"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             View More
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </motion.button>
+          </motion.a>
         </motion.div>
       </div>
       <SectionNavigation currentSectionId={`${id}-gallery`} />

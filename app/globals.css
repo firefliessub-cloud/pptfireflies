@@ -13,12 +13,6 @@
     height: 100%;
     overflow: hidden;
   }
-
-  /* Hide cursor globally on desktop when custom cursor is active */
-  html.custom-cursor-active *,
-  html.custom-cursor-active {
-    cursor: none !important;
-  }
 }
 
 @layer utilities {
