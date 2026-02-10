@@ -271,7 +271,8 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
                 )}
               </motion.div>
             );
-          })}
+            })
+          )}
         </motion.div>
 
         {/* View More Button */}
