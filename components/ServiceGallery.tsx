@@ -10,6 +10,7 @@ import SectionNavigation from "./SectionNavigation";
 interface ServiceGalleryProps {
   id: string;
   title: string;
+  projectNames?: string[]; // Optional array of project names
 }
 
 interface MediaItem {
@@ -18,7 +19,7 @@ interface MediaItem {
   index: number;
 }
 
-export default function ServiceGallery({ id, title }: ServiceGalleryProps) {
+export default function ServiceGallery({ id, title, projectNames }: ServiceGalleryProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
@@ -189,6 +190,15 @@ export default function ServiceGallery({ id, title }: ServiceGalleryProps) {
                     />
                     <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/10 transition-all duration-300"></div>
                   </>
+                )}
+                
+                {/* Project Name Label - Bottom Center (hidden for Pre Viz Studio, Immersive Installations, and Kinetic Lighting) */}
+                {id !== "pre-viz-studio" && id !== "immersive-installations" && id !== "kinetic-lighting" && (
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-4 flex items-end">
+                    <p className="text-white font-semibold text-sm sm:text-base text-center w-full">
+                      {projectNames && projectNames[index] ? projectNames[index] : `Project ${index + 1}`}
+                    </p>
+                  </div>
                 )}
               </motion.div>
             );

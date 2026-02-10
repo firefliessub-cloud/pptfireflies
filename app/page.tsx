@@ -6,6 +6,8 @@ import About from "@/components/About";
 import WhatWeDo from "@/components/WhatWeDo";
 import ServiceHeader from "@/components/ServiceHeader";
 import ServiceGallery from "@/components/ServiceGallery";
+import LiveEventsGallery from "@/components/LiveEventsGallery";
+import ClientLogos from "@/components/ClientLogos";
 import Contact from "@/components/Contact";
 import { useScrollControl } from "@/hooks/useScrollControl";
 import { useEffect, useState } from "react";
@@ -14,14 +16,17 @@ const sections = [
   "hero",
   "about",
   "what-we-do",
-  "event-lighting",
-  "event-lighting-gallery",
+  "live-events",
+  "live-events-gallery",
+  "client-logos",
   "architectural-lighting",
   "architectural-lighting-gallery",
   "kinetic-lighting",
   "kinetic-lighting-gallery",
   "immersive-installations",
   "immersive-installations-gallery",
+  "pre-viz-studio",
+  "pre-viz-studio-gallery",
   "contact",
 ];
 
@@ -96,14 +101,47 @@ export default function Home() {
       <About />
       <WhatWeDo />
       <ServiceHeader
-        id="event-lighting"
-        title="Event Lighting"
+        id="live-events"
+        title="Live Events"
         description="Transform your events with dynamic lighting that creates unforgettable atmospheres. From intimate gatherings to grand celebrations, we craft lighting experiences that elevate every moment."
       />
-      <ServiceGallery
-        id="event-lighting"
-        title="Event Lighting"
+      <LiveEventsGallery
+        projectNames={{
+          Concert: [
+            "Ap Dhillon Tour",
+            "Prabhu Deva Tour",
+            "Messi Goat Tour",
+            "Dabangg Tour",
+            "DSP India Tour",
+            "Sufi Tour Dhaka"
+          ],
+          Corporate: [
+            "Corporate Project 1",
+            "Corporate Project 2",
+            "Corporate Project 3",
+            "Corporate Project 4",
+            "Corporate Project 5",
+            "Corporate Project 6"
+          ],
+          Wedding: [
+            "Ambani Wedding",
+            "Udaipur Wedding",
+            "Mehrangarh Wedding",
+            "Wedding Project 4",
+            "Wedding Project 5",
+            "Wedding Project 6"
+          ],
+          "Social Event": [
+            "Social Event Project 1",
+            "Social Event Project 2",
+            "Social Event Project 3",
+            "Social Event Project 4",
+            "Social Event Project 5",
+            "Social Event Project 6"
+          ]
+        }}
       />
+      <ClientLogos />
       <ServiceHeader
         id="architectural-lighting"
         title="Architectural Lighting"
@@ -112,6 +150,14 @@ export default function Home() {
       <ServiceGallery
         id="architectural-lighting"
         title="Architectural Lighting"
+        projectNames={[
+          "Kohinoor Building",
+          "Bandra Worli Sea Link",
+          "Police Headquarter - Mumbai",
+          "Red Fort - New Delhi ",
+          "Chabutra - New Delhi",
+          "Victoria Memorial"
+        ]}
       />
       <ServiceHeader
         id="kinetic-lighting"
@@ -130,6 +176,18 @@ export default function Home() {
       <ServiceGallery
         id="immersive-installations"
         title="Immersive Interactive Installations"
+        projectNames={[
+          
+        ]}
+      />
+      <ServiceHeader
+        id="pre-viz-studio"
+        title="Pre Viz Studio"
+        description="Visualize your lighting designs before installation. Our pre-visualization studio brings your concepts to life, allowing you to see and refine every detail before the first light is hung."
+      />
+      <ServiceGallery
+        id="pre-viz-studio"
+        title="Pre Viz Studio"
       />
       <Contact />
     </main>

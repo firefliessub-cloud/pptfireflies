@@ -36,10 +36,13 @@ export default function About() {
           className="space-y-6 sm:space-y-8 text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 leading-relaxed text-left w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
         >
           <p>
-            Fireflies Creative Technologies. Established in 2012, is a Mumbai-based lighting design and technology studio with an international presence across the Middle East. We work across architectural, heritage, and experiential lighting, as well as live events, weddings, corporate engagements, large-scale opening ceremonies, and concerts.
+            Fireflies Creative Technologies was founded in 2012 and is headquartered in Mumbai, with an international presence across the Middle East.
           </p>
           <p>
-            At Fireflies, our mission is to enhance the visual and spatial experience of every project by combining thoughtful design, technical expertise, and innovative lighting technology across diverse scales and contexts.
+            We design and deliver immersive live and architectural experiences across corporate launches, high-profile events, weddings, music concerts, and theatrical musical productions. Our capabilities include architectural lighting, kinetic and customised installations, immersive interactive experiences, and a dedicated pre-visualisation studio offered as a standalone creative service.
+          </p>
+          <p>
+            Across every medium, we seamlessly embed technology into design to create precise, immersive, and future-ready experiences.
           </p>
         </motion.div>
       </div>

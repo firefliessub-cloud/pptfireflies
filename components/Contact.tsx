@@ -3,18 +3,12 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { Phone, Mail, MapPin, Instagram, Facebook, Twitter, Linkedin } from "lucide-react";
+import { Phone, Mail, MapPin } from "lucide-react";
 import SectionNavigation from "./SectionNavigation";
 
 export default function Contact() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const socialLinks = [
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-  ];
 
   return (
     <section
@@ -49,7 +43,7 @@ export default function Contact() {
                 <Phone className="w-8 h-8 text-accent" />
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Phone</h3>
-              <p className="text-gray-300 text-sm">+91 9619401194</p>
+              <p className="text-gray-300 text-sm">+91 9920585878</p>
             </div>
           </div>
 
@@ -74,33 +68,6 @@ export default function Contact() {
               <p className="text-gray-300 text-sm">Lodha Supremus, wadala, Mumbai 400037</p>
             </div>
           </div>
-        </motion.div>
-
-        {/* Social Media Icons */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex gap-4 justify-center"
-        >
-          {socialLinks.map((social, index) => {
-            const Icon = social.icon;
-            return (
-              <motion.a
-                key={social.label}
-                href={social.href}
-                aria-label={social.label}
-                className="p-3 bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-lg hover:bg-accent/10 hover:border-accent/50 transition-all duration-300"
-                whileHover={{ scale: 1.1, y: -2 }}
-                whileTap={{ scale: 0.9 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
-              >
-                <Icon className="w-5 h-5 text-gray-400 hover:text-accent transition-colors" />
-              </motion.a>
-            );
-          })}
         </motion.div>
       </div>
       <SectionNavigation currentSectionId="contact" />
