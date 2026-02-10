@@ -28,6 +28,9 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>("Concert");
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  // Cache media items per category to avoid reloading
+  const mediaCache = useRef<Record<string, MediaItem[]>>({});
+  const [imageLoadStates, setImageLoadStates] = useState<Record<string, boolean>>({});
 
   // Helper to get file paths for a subcategory and slot
   const getMediaPaths = (subcategory: string, index: number) => {
@@ -54,34 +57,29 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
 
   // Check for media files when subcategory changes
   useEffect(() => {
-    // Clear media items immediately when category changes
-    setMediaItems([]);
-    setIsLoading(true);
+    // Check cache first - if we have cached data, use it immediately
+    if (mediaCache.current[selectedSubcategory]) {
+      setMediaItems(mediaCache.current[selectedSubcategory]);
+      setIsLoading(false);
+      return;
+    }
 
+    // If not cached, start loading
+    setIsLoading(true);
     if (!isInView) return;
 
     const checkForMedia = async () => {
       const newMediaItems: MediaItem[] = [];
       
-      // Preload all images first for faster display
-      const preloadPromises: Promise<boolean>[] = [];
-      for (let i = 0; i < 6; i++) {
-        const paths = getMediaPaths(selectedSubcategory, i);
-        preloadPromises.push(preloadImage(paths.image));
-      }
-      
-      // Wait for all preloads to complete
-      await Promise.all(preloadPromises);
-
-      // Check for media files
+      // Build media items array immediately (don't wait for preload)
       for (let i = 0; i < 6; i++) {
         const paths = getMediaPaths(selectedSubcategory, i);
         let foundMedia: MediaItem | null = null;
 
-        // Check for MP4 video (with timeout)
+        // Check for MP4 video (with shorter timeout)
         try {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 1000);
+          const timeoutId = setTimeout(() => controller.abort(), 500);
           const response = await fetch(paths.videoMp4, { 
             method: 'HEAD',
             signal: controller.signal 
@@ -96,7 +94,7 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
         if (!foundMedia) {
           try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 1000);
+            const timeoutId = setTimeout(() => controller.abort(), 500);
             const response = await fetch(paths.videoWebm, { 
               method: 'HEAD',
               signal: controller.signal 
@@ -115,8 +113,17 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
         newMediaItems.push(foundMedia);
       }
       
+      // Set items immediately and cache them
       setMediaItems(newMediaItems);
+      mediaCache.current[selectedSubcategory] = newMediaItems;
       setIsLoading(false);
+
+      // Preload images in background for better performance
+      newMediaItems.forEach((item) => {
+        if (item.type === "image") {
+          preloadImage(item.src).catch(() => {});
+        }
+      });
     };
 
     checkForMedia();
@@ -248,13 +255,25 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       priority={index < 3}
                       loading={index < 3 ? "eager" : "lazy"}
+                      unoptimized={false}
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         if (target.src.includes(".png")) {
                           target.src = paths.imageJpg;
                         }
                       }}
+                      onLoad={() => {
+                        setImageLoadStates((prev) => ({
+                          ...prev,
+                          [`${selectedSubcategory}-${index}`]: true,
+                        }));
+                      }}
                     />
+                    {!imageLoadStates[`${selectedSubcategory}-${index}`] && (
+                      <div className="absolute inset-0 bg-gray-900/50 animate-pulse flex items-center justify-center">
+                        <div className="w-8 h-8 border-2 border-gray-700 border-t-accent rounded-full animate-spin"></div>
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/10 transition-all duration-300"></div>
                   </>
                 )}

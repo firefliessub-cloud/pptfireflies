@@ -55,11 +55,14 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
     if (!isInView) return;
 
     const checkForVideos = async () => {
-      // Preload all images first
+      // Preload images (try both .png and .jpg)
       const preloadPromises: Promise<boolean>[] = [];
       for (let i = 0; i < 6; i++) {
         const paths = getMediaPaths(i);
-        preloadPromises.push(preloadImage(paths.image));
+        // Try PNG first, then JPG if PNG fails
+        preloadPromises.push(
+          preloadImage(paths.image).catch(() => preloadImage(paths.imageJpg))
+        );
       }
       await Promise.all(preloadPromises);
       setImagesLoaded(true);
@@ -76,7 +79,7 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
             video.onloadedmetadata = () => resolve(true);
             video.onerror = () => resolve(false);
             video.src = src;
-            setTimeout(() => resolve(false), 1000); // Timeout after 1s
+            setTimeout(() => resolve(false), 500); // Shorter timeout
           });
         };
 
@@ -210,8 +213,10 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
                       onError={(e) => {
                         // Try .jpg if .png doesn't exist
                         const target = e.target as HTMLImageElement;
-                        if (target.src.includes(".png")) {
-                          target.src = paths.imageJpg;
+                        if (target.src.includes(".png") && !target.src.includes(".jpg")) {
+                          // Try JPG version
+                          const jpgSrc = target.src.replace(".png", ".jpg");
+                          target.src = jpgSrc;
                         }
                         // If both image formats fail, video check will happen on video error
                       }}
