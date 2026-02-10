@@ -55,17 +55,18 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
     if (!isInView) return;
 
     const checkForVideos = async () => {
-      // Preload images (try both .png and .jpg)
-      const preloadPromises: Promise<boolean>[] = [];
+      // Set loaded immediately so images can start showing
+      setImagesLoaded(true);
+      
+      // Preload images in background (prioritize PNG, fallback to JPG)
       for (let i = 0; i < 6; i++) {
         const paths = getMediaPaths(i);
-        // Try PNG first, then JPG if PNG fails
-        preloadPromises.push(
-          preloadImage(paths.image).catch(() => preloadImage(paths.imageJpg))
-        );
+        // Try PNG first (faster), then JPG if PNG fails
+        preloadImage(paths.image).catch(() => {
+          // Only try JPG if PNG fails
+          return preloadImage(paths.imageJpg);
+        });
       }
-      await Promise.all(preloadPromises);
-      setImagesLoaded(true);
 
       // Then check for videos
       for (let i = 0; i < 6; i++) {

@@ -35,13 +35,16 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
   // Helper to get file paths for a subcategory and slot
   const getMediaPaths = (subcategory: string, index: number) => {
     const itemNumber = index + 1;
-    // Replace spaces with hyphens for file names
-    const subcategoryLower = subcategory.toLowerCase().replace(/\s+/g, '-');
+    const subcategoryLower = subcategory.toLowerCase();
+    // Keep spaces for Social Event, use hyphens for others
+    const fileNameSubcategory = subcategoryLower === "social event" 
+      ? "social event" 
+      : subcategoryLower.replace(/\s+/g, '-');
     return {
-      image: `/images/live-events-${subcategoryLower}-${itemNumber}.png`,
-      imageJpg: `/images/live-events-${subcategoryLower}-${itemNumber}.jpg`,
-      videoMp4: `/images/live-events-${subcategoryLower}-${itemNumber}.mp4`,
-      videoWebm: `/images/live-events-${subcategoryLower}-${itemNumber}.webm`,
+      image: `/images/live-events-${fileNameSubcategory}-${itemNumber}.png`,
+      imageJpg: `/images/live-events-${fileNameSubcategory}-${itemNumber}.jpg`,
+      videoMp4: `/images/live-events-${fileNameSubcategory}-${itemNumber}.mp4`,
+      videoWebm: `/images/live-events-${fileNameSubcategory}-${itemNumber}.webm`,
     };
   };
 
@@ -106,9 +109,42 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
           } catch (error) { /* ignore */ }
         }
 
-        // If no video, default to image
+        // If no video, check for image (try PNG first, then JPG)
         if (!foundMedia) {
-          foundMedia = { type: "image", src: paths.image, index: i };
+          // Try PNG first
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 300);
+            const response = await fetch(paths.image, { 
+              method: 'HEAD',
+              signal: controller.signal 
+            });
+            clearTimeout(timeoutId);
+            if (response.ok) {
+              foundMedia = { type: "image", src: paths.image, index: i };
+            }
+          } catch (error) { /* ignore */ }
+          
+          // If PNG doesn't exist, try JPG
+          if (!foundMedia) {
+            try {
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 300);
+              const response = await fetch(paths.imageJpg, { 
+                method: 'HEAD',
+                signal: controller.signal 
+              });
+              clearTimeout(timeoutId);
+              if (response.ok) {
+                foundMedia = { type: "image", src: paths.imageJpg, index: i };
+              }
+            } catch (error) { /* ignore */ }
+          }
+          
+          // Default to PNG if both checks fail (will show error state)
+          if (!foundMedia) {
+            foundMedia = { type: "image", src: paths.image, index: i };
+          }
         }
         newMediaItems.push(foundMedia);
       }
@@ -258,7 +294,8 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
                       unoptimized={false}
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        if (target.src.includes(".png")) {
+                        // Try JPG if PNG fails
+                        if (target.src.includes(".png") && !target.src.includes(".jpg")) {
                           target.src = paths.imageJpg;
                         }
                       }}
