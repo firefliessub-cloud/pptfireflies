@@ -27,6 +27,7 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
   // Track media type for each slot (image or video)
   // Default to undefined - will be set when media loads
   const [mediaTypes, setMediaTypes] = useState<Record<number, "image" | "video">>({});
+  const [imagesLoaded, setImagesLoaded] = useState<boolean>(false);
 
   // Helper to get file paths for a slot
   const getMediaPaths = (index: number) => {
@@ -39,11 +40,31 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
     };
   };
 
-  // Check for videos when section comes into view
+  // Preload images for better performance
+  const preloadImage = (src: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new window.Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = src;
+    });
+  };
+
+  // Check for videos and preload images when section comes into view
   useEffect(() => {
     if (!isInView) return;
 
     const checkForVideos = async () => {
+      // Preload all images first
+      const preloadPromises: Promise<boolean>[] = [];
+      for (let i = 0; i < 6; i++) {
+        const paths = getMediaPaths(i);
+        preloadPromises.push(preloadImage(paths.image));
+      }
+      await Promise.all(preloadPromises);
+      setImagesLoaded(true);
+
+      // Then check for videos
       for (let i = 0; i < 6; i++) {
         const paths = getMediaPaths(i);
         
@@ -55,7 +76,7 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
             video.onloadedmetadata = () => resolve(true);
             video.onerror = () => resolve(false);
             video.src = src;
-            setTimeout(() => resolve(false), 500); // Timeout after 500ms
+            setTimeout(() => resolve(false), 1000); // Timeout after 1s
           });
         };
 
@@ -115,9 +136,20 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
           transition={{ duration: 0.8 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
         >
-          {Array.from({ length: 6 }, (_, index) => {
-            const paths = getMediaPaths(index);
-            const isVideo = mediaTypes[index] === "video";
+          {!imagesLoaded ? (
+            // Loading skeleton
+            Array.from({ length: 6 }).map((_, index) => (
+              <div
+                key={`loading-${index}`}
+                className="relative aspect-square overflow-hidden rounded-xl bg-gray-900/50 animate-pulse"
+              >
+                <div className="absolute inset-0 bg-gray-800/50"></div>
+              </div>
+            ))
+          ) : (
+            Array.from({ length: 6 }, (_, index) => {
+              const paths = getMediaPaths(index);
+              const isVideo = mediaTypes[index] === "video";
             
             return (
               <motion.div
@@ -173,6 +205,8 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      priority={index < 3}
+                      loading={index < 3 ? "eager" : "lazy"}
                       onError={(e) => {
                         // Try .jpg if .png doesn't exist
                         const target = e.target as HTMLImageElement;
@@ -202,7 +236,8 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
                 )}
               </motion.div>
             );
-          })}
+          })
+          )}
         </motion.div>
 
         {/* View More Button */}

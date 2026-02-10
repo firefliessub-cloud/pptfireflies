@@ -27,11 +27,13 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>("Concert");
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Helper to get file paths for a subcategory and slot
   const getMediaPaths = (subcategory: string, index: number) => {
     const itemNumber = index + 1;
-    const subcategoryLower = subcategory.toLowerCase();
+    // Replace spaces with hyphens for file names
+    const subcategoryLower = subcategory.toLowerCase().replace(/\s+/g, '-');
     return {
       image: `/images/live-events-${subcategoryLower}-${itemNumber}.png`,
       imageJpg: `/images/live-events-${subcategoryLower}-${itemNumber}.jpg`,
@@ -40,19 +42,51 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
     };
   };
 
+  // Preload images for better performance
+  const preloadImage = (src: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new window.Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = src;
+    });
+  };
+
   // Check for media files when subcategory changes
   useEffect(() => {
+    // Clear media items immediately when category changes
+    setMediaItems([]);
+    setIsLoading(true);
+
     if (!isInView) return;
 
     const checkForMedia = async () => {
       const newMediaItems: MediaItem[] = [];
+      
+      // Preload all images first for faster display
+      const preloadPromises: Promise<boolean>[] = [];
+      for (let i = 0; i < 6; i++) {
+        const paths = getMediaPaths(selectedSubcategory, i);
+        preloadPromises.push(preloadImage(paths.image));
+      }
+      
+      // Wait for all preloads to complete
+      await Promise.all(preloadPromises);
+
+      // Check for media files
       for (let i = 0; i < 6; i++) {
         const paths = getMediaPaths(selectedSubcategory, i);
         let foundMedia: MediaItem | null = null;
 
-        // Check for MP4 video
+        // Check for MP4 video (with timeout)
         try {
-          const response = await fetch(paths.videoMp4, { method: 'HEAD' });
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 1000);
+          const response = await fetch(paths.videoMp4, { 
+            method: 'HEAD',
+            signal: controller.signal 
+          });
+          clearTimeout(timeoutId);
           if (response.ok) {
             foundMedia = { type: "video", src: paths.videoMp4, index: i };
           }
@@ -61,7 +95,13 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
         // If no MP4, check for WebM video
         if (!foundMedia) {
           try {
-            const response = await fetch(paths.videoWebm, { method: 'HEAD' });
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 1000);
+            const response = await fetch(paths.videoWebm, { 
+              method: 'HEAD',
+              signal: controller.signal 
+            });
+            clearTimeout(timeoutId);
             if (response.ok) {
               foundMedia = { type: "video", src: paths.videoWebm, index: i };
             }
@@ -74,7 +114,9 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
         }
         newMediaItems.push(foundMedia);
       }
+      
       setMediaItems(newMediaItems);
+      setIsLoading(false);
     };
 
     checkForMedia();
@@ -143,18 +185,29 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
           transition={{ duration: 0.5 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
         >
-          {mediaItems.map((item, index) => {
-            if (!item) return null;
-            const paths = getMediaPaths(selectedSubcategory, index);
-            
-            return (
-              <motion.div
-                key={`${selectedSubcategory}-${index}`}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="relative aspect-square overflow-hidden rounded-xl group cursor-pointer"
+          {isLoading ? (
+            // Loading skeleton
+            Array.from({ length: 6 }).map((_, index) => (
+              <div
+                key={`loading-${index}`}
+                className="relative aspect-square overflow-hidden rounded-xl bg-gray-900/50 animate-pulse"
               >
+                <div className="absolute inset-0 bg-gray-800/50"></div>
+              </div>
+            ))
+          ) : (
+            mediaItems.map((item, index) => {
+              if (!item) return null;
+              const paths = getMediaPaths(selectedSubcategory, index);
+              
+              return (
+                <motion.div
+                  key={`${selectedSubcategory}-${index}-${item.src}`}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  className="relative aspect-square overflow-hidden rounded-xl group cursor-pointer"
+                >
                 {item.type === "video" ? (
                   <>
                     <video
@@ -193,6 +246,8 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      priority={index < 3}
+                      loading={index < 3 ? "eager" : "lazy"}
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         if (target.src.includes(".png")) {
