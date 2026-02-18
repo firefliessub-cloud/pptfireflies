@@ -3,15 +3,38 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    box-sizing: border-box;
+  }
+
   html {
     scroll-behavior: smooth;
     height: 100%;
+    background-color: #000000 !important;
+    margin: 0;
+    padding: 0;
   }
 
   body {
     @apply bg-black text-white antialiased;
     height: 100%;
     overflow: hidden;
+    background-color: #000000 !important;
+    margin: 0;
+    padding: 0;
+  }
+
+  #__next {
+    background-color: #000000 !important;
+    min-height: 100vh;
+  }
+
+  main {
+    background-color: #000000 !important;
+  }
+
+  section {
+    background-color: #000000;
   }
 }
 

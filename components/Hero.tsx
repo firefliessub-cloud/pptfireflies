@@ -25,18 +25,18 @@ export default function Hero() {
   };
 
   return (
-    <section id="hero" className="relative h-screen w-full overflow-hidden flex items-center justify-center snap-start snap-always isolate">
+    <section id="hero" className="relative h-screen w-full overflow-hidden flex items-center justify-center snap-start snap-always">
       {/* Video Background */}
       <div className="absolute inset-0 w-full h-full z-0">
         {/* Fallback gradient - only shows if video doesn't load */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 z-0"></div>
         <video
           ref={videoRef}
           autoPlay
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover z-0"
           preload="auto"
         >
           <source src="/videos/hero-background.mp4" type="video/mp4" />
@@ -46,10 +46,10 @@ export default function Hero() {
       </div>
 
       {/* Gradient Overlay - Darkens video for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-black/40 z-[1]"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-black/40 z-10"></div>
 
       {/* Content */}
-      <div className="relative z-[2] text-center px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[95vw] mx-auto w-full pointer-events-auto">
+      <div className="relative z-30 text-center px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[95vw] mx-auto w-full pointer-events-auto">
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -95,9 +95,7 @@ export default function Hero() {
       </div>
 
       {/* Section Navigation */}
-      <div className="relative z-[3]">
-        <SectionNavigation currentSectionId="hero" />
-      </div>
+      <SectionNavigation currentSectionId="hero" />
     </section>
   );
 }

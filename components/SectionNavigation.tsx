@@ -1,20 +1,30 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { sections } from "@/lib/sections";
 
 interface SectionNavigationProps {
   currentSectionId: string;
 }
 
+const sections = [
+  "hero",
+  "about",
+  "what-we-do",
+  "event-lighting",
+  "event-lighting-gallery",
+  "architectural-lighting",
+  "architectural-lighting-gallery",
+  "kinetic-lighting",
+  "kinetic-lighting-gallery",
+  "immersive-installations",
+  "immersive-installations-gallery",
+  "contact",
+];
+
 export default function SectionNavigation({ currentSectionId }: SectionNavigationProps) {
   const scrollToSection = (direction: "next" | "prev") => {
     const currentIndex = sections.indexOf(currentSectionId);
-    if (currentIndex === -1) {
-      // Fallback: try to find the section element
-      const element = document.querySelector(`#${currentSectionId}`);
-      if (!element) return;
-    }
+    if (currentIndex === -1) return;
 
     let targetIndex: number;
 
@@ -33,9 +43,8 @@ export default function SectionNavigation({ currentSectionId }: SectionNavigatio
     }
   };
 
-  const currentIndex = sections.indexOf(currentSectionId);
-  const showBack = currentIndex > 0;
-  const showNext = currentIndex < sections.length - 1;
+  const showBack = currentSectionId !== "hero";
+  const showNext = currentSectionId !== "contact";
 
   return (
     <>
@@ -45,7 +54,7 @@ export default function SectionNavigation({ currentSectionId }: SectionNavigatio
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1, repeat: Infinity, repeatType: "reverse", duration: 1.5 }}
-                  className="fixed bottom-8 left-8 z-[100] cursor-pointer"
+                  className="absolute bottom-8 left-8 z-50 cursor-pointer"
           onClick={() => scrollToSection("prev")}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
@@ -76,7 +85,7 @@ export default function SectionNavigation({ currentSectionId }: SectionNavigatio
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1, repeat: Infinity, repeatType: "reverse", duration: 1.5 }}
-                  className="fixed bottom-8 right-8 z-[100] cursor-pointer"
+                  className="absolute bottom-8 right-8 z-50 cursor-pointer"
           onClick={() => scrollToSection("next")}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
