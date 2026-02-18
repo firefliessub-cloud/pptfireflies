@@ -41,7 +41,7 @@ const services = [
 
 export default function WhatWeDo() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: false, margin: "-200px" });
 
   const handleServiceClick = (id: string) => {
     const element = document.querySelector(`#${id}`);
@@ -63,7 +63,7 @@ export default function WhatWeDo() {
       <div className="max-w-7xl mx-auto relative z-10">
         <motion.h2
           initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="text-4xl sm:text-5xl md:text-6xl font-bold mb-16 text-center bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent"
         >
@@ -79,7 +79,7 @@ export default function WhatWeDo() {
                 <motion.div
                   key={service.id}
                   initial={{ opacity: 0, y: 50 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: index * 0.2 }}
                   onClick={() => handleServiceClick(service.id)}
                   className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 cursor-pointer overflow-hidden hover:border-accent transition-all duration-300"
@@ -110,7 +110,7 @@ export default function WhatWeDo() {
                 <motion.div
                   key={service.id}
                   initial={{ opacity: 0, y: 50 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: (index + 3) * 0.2 }}
                   onClick={() => handleServiceClick(service.id)}
                   className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 cursor-pointer overflow-hidden hover:border-accent transition-all duration-300 w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] max-w-[400px]"

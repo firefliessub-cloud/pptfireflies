@@ -7,7 +7,7 @@ import SectionNavigation from "./SectionNavigation";
 
 export default function About() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: false, margin: "-200px" });
 
   return (
     <section
@@ -22,7 +22,7 @@ export default function About() {
       <div className="w-full max-w-6xl mx-auto relative z-10 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
         <motion.h2
           initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] font-bold mb-12 sm:mb-16 md:mb-20 text-center bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent w-full"
         >
@@ -31,7 +31,7 @@ export default function About() {
 
         <motion.div
           initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="space-y-6 sm:space-y-8 text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 leading-relaxed text-left w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
         >

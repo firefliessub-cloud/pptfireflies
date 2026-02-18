@@ -8,7 +8,7 @@ import SectionNavigation from "./SectionNavigation";
 
 export default function Contact() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: false, margin: "-200px" });
 
   return (
     <section
@@ -22,7 +22,7 @@ export default function Contact() {
       <div className="max-w-6xl mx-auto relative z-10 w-full">
         <motion.h2
           initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold mb-16 text-center text-white"
         >
@@ -32,7 +32,7 @@ export default function Contact() {
         {/* Contact Information Cards */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto"
         >

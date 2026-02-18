@@ -13,7 +13,7 @@ interface ServiceHeaderProps {
 
 export default function ServiceHeader({ id, title, description }: ServiceHeaderProps) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: false, margin: "-200px" });
 
   return (
     <section
@@ -27,7 +27,7 @@ export default function ServiceHeader({ id, title, description }: ServiceHeaderP
       <div className="max-w-4xl mx-auto relative z-10 text-center">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-white">

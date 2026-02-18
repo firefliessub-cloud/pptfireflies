@@ -35,6 +35,12 @@
 
   section {
     background-color: #000000;
+    color: #ffffff;
+  }
+
+  /* Ensure text is visible */
+  h1, h2, h3, h4, h5, h6, p, span, div {
+    color: inherit;
   }
 }
 
