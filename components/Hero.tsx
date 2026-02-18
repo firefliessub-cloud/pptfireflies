@@ -70,7 +70,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-xl sm:text-2xl md:text-3xl text-gray-300 mb-12 max-w-3xl mx-auto"
         >
-          Illuminating Experiences Through Technology
+          Illuminating Experiences Through Tech
         </motion.p>
 
         <motion.div
