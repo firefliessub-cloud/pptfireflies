@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
-import Image from "next/image";
+import OptimizedImage from "./OptimizedImage";
+import OptimizedVideo from "./OptimizedVideo";
 import SectionNavigation from "./SectionNavigation";
 
 interface ServiceGalleryProps {
@@ -167,22 +168,16 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
                 {/* Video - shown if video type is detected */}
                 {isVideo && (
                   <>
-                    <video
-                      ref={(el) => {
-                        videoRefs.current[index] = el;
-                        // Auto-play video when it loads
-                        if (el && isInView) {
-                          el.play().catch(() => {
-                            // Autoplay might be blocked, that's okay
-                          });
-                        }
-                      }}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    <OptimizedVideo
+                      src={paths.videoMp4}
+                      srcWebm={paths.videoWebm}
+                      poster={paths.image}
+                      className="absolute inset-0 w-full h-full group-hover:scale-110 transition-transform duration-500"
                       autoPlay
                       loop
                       muted
                       playsInline
-                      preload="auto"
+                      priority={index < 3}
                       onError={() => {
                         // If video fails, switch to image
                         setMediaTypes((prev) => {
@@ -191,10 +186,7 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
                           return newTypes;
                         });
                       }}
-                    >
-                      <source src={paths.videoMp4} type="video/mp4" />
-                      <source src={paths.videoWebm} type="video/webm" />
-                    </video>
+                    />
                     {/* Subtle hover overlay */}
                     <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/5 transition-all duration-300 pointer-events-none"></div>
                   </>
@@ -203,24 +195,14 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
                 {/* Image - shown by default or if video fails */}
                 {!isVideo && (
                   <>
-                    <Image
+                    <OptimizedImage
                       src={paths.image}
                       alt={`${title} - Image ${index + 1}`}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       priority={index < 3}
-                      loading={index < 3 ? "eager" : "lazy"}
-                      onError={(e) => {
-                        // Try .jpg if .png doesn't exist
-                        const target = e.target as HTMLImageElement;
-                        if (target.src.includes(".png") && !target.src.includes(".jpg")) {
-                          // Try JPG version
-                          const jpgSrc = target.src.replace(".png", ".jpg");
-                          target.src = jpgSrc;
-                        }
-                        // If both image formats fail, video check will happen on video error
-                      }}
+                      fallbackSrc={paths.imageJpg}
                       onLoad={() => {
                         // Image loaded successfully - ensure type is set
                         if (mediaTypes[index] !== "image") {

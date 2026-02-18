@@ -3,20 +3,9 @@
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import SectionNavigation from "./SectionNavigation";
-import { useRef, useEffect } from "react";
+import OptimizedVideo from "./OptimizedVideo";
 
 export default function Hero() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    // Ensure video plays
-    if (videoRef.current) {
-      videoRef.current.play().catch((error) => {
-        console.log("Video autoplay prevented:", error);
-      });
-    }
-  }, []);
-
   const scrollToAbout = () => {
     const element = document.querySelector("#about");
     if (element) {
@@ -30,19 +19,16 @@ export default function Hero() {
       <div className="absolute inset-0 w-full h-full z-0">
         {/* Fallback gradient - only shows if video doesn't load */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 z-0"></div>
-        <video
-          ref={videoRef}
+        <OptimizedVideo
+          src="/videos/hero-background.mp4"
+          srcWebm="/videos/hero-background.webm"
+          className="absolute inset-0 w-full h-full z-0"
           autoPlay
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0"
-          preload="auto"
-        >
-          <source src="/videos/hero-background.mp4" type="video/mp4" />
-          <source src="/videos/hero-background.webm" type="video/webm" />
-          Your browser does not support the video tag.
-        </video>
+          priority={true}
+        />
       </div>
 
       {/* Gradient Overlay - Darkens video for text readability */}
