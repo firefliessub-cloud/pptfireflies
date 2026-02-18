@@ -4,8 +4,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
-import OptimizedImage from "./OptimizedImage";
-import OptimizedVideo from "./OptimizedVideo";
+import Image from "next/image";
 import SectionNavigation from "./SectionNavigation";
 
 interface MediaItem {
@@ -254,15 +253,20 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
                 >
                 {item.type === "video" ? (
                   <>
-                    <OptimizedVideo
+                    <video
+                      ref={(el) => {
+                        videoRefs.current[index] = el;
+                        if (el && isInView) {
+                          el.play().catch(() => {});
+                        }
+                      }}
                       src={item.src}
-                      poster={paths.image}
-                      className="absolute inset-0 w-full h-full group-hover:scale-110 transition-transform duration-500"
-                      autoPlay
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       loop
                       muted
                       playsInline
-                      priority={index < 3}
+                      autoPlay
+                      preload="auto"
                       onError={() => {
                         setMediaItems((prev) => {
                           const newItems = [...prev];
@@ -279,14 +283,22 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
                   </>
                 ) : (
                   <>
-                    <OptimizedImage
+                    <Image
                       src={item.src}
                       alt={`Live Events ${selectedSubcategory} - Image ${index + 1}`}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       priority={index < 3}
-                      fallbackSrc={paths.imageJpg}
+                      loading={index < 3 ? "eager" : "lazy"}
+                      unoptimized={false}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        // Try JPG if PNG fails
+                        if (target.src.includes(".png") && !target.src.includes(".jpg")) {
+                          target.src = paths.imageJpg;
+                        }
+                      }}
                       onLoad={() => {
                         setImageLoadStates((prev) => ({
                           ...prev,
@@ -294,6 +306,11 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
                         }));
                       }}
                     />
+                    {!imageLoadStates[`${selectedSubcategory}-${index}`] && (
+                      <div className="absolute inset-0 bg-gray-900/50 animate-pulse flex items-center justify-center">
+                        <div className="w-8 h-8 border-2 border-gray-700 border-t-accent rounded-full animate-spin"></div>
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/10 transition-all duration-300"></div>
                   </>
                 )}
