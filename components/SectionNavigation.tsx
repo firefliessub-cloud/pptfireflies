@@ -1,30 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { sections } from "@/lib/sections";
 
 interface SectionNavigationProps {
   currentSectionId: string;
 }
 
-const sections = [
-  "hero",
-  "about",
-  "what-we-do",
-  "event-lighting",
-  "event-lighting-gallery",
-  "architectural-lighting",
-  "architectural-lighting-gallery",
-  "kinetic-lighting",
-  "kinetic-lighting-gallery",
-  "immersive-installations",
-  "immersive-installations-gallery",
-  "contact",
-];
-
 export default function SectionNavigation({ currentSectionId }: SectionNavigationProps) {
   const scrollToSection = (direction: "next" | "prev") => {
     const currentIndex = sections.indexOf(currentSectionId);
-    if (currentIndex === -1) return;
+    if (currentIndex === -1) {
+      // Fallback: try to find the section element
+      const element = document.querySelector(`#${currentSectionId}`);
+      if (!element) return;
+    }
 
     let targetIndex: number;
 
@@ -43,8 +33,9 @@ export default function SectionNavigation({ currentSectionId }: SectionNavigatio
     }
   };
 
-  const showBack = currentSectionId !== "hero";
-  const showNext = currentSectionId !== "contact";
+  const currentIndex = sections.indexOf(currentSectionId);
+  const showBack = currentIndex > 0;
+  const showNext = currentIndex < sections.length - 1;
 
   return (
     <>

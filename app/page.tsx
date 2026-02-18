@@ -10,82 +10,116 @@ import LiveEventsGallery from "@/components/LiveEventsGallery";
 import ClientLogos from "@/components/ClientLogos";
 import Contact from "@/components/Contact";
 import { useScrollControl } from "@/hooks/useScrollControl";
-import { useEffect, useState } from "react";
-
-const sections = [
-  "hero",
-  "about",
-  "what-we-do",
-  "live-events",
-  "live-events-gallery",
-  "client-logos",
-  "architectural-lighting",
-  "architectural-lighting-gallery",
-  "kinetic-lighting",
-  "kinetic-lighting-gallery",
-  "immersive-installations",
-  "immersive-installations-gallery",
-  "pre-viz-studio",
-  "pre-viz-studio-gallery",
-  "contact",
-];
+import { useEffect, useState, useRef } from "react";
+import { sections } from "@/lib/sections";
 
 export default function Home() {
   useScrollControl();
   const [currentSection, setCurrentSection] = useState("hero");
 
-  // Track current section on scroll
+  // Track current section on scroll - improved detection
   useEffect(() => {
     if (typeof window === "undefined") return;
     
+    let ticking = false;
+    
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + window.innerHeight / 2;
-      const sectionElements = sections.map((id) => ({
-        id,
-        element: document.querySelector(`#${id}`),
-      }));
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollPosition = window.scrollY + window.innerHeight / 3;
+          
+          // Find the section that's currently most visible
+          let currentSectionId = sections[0];
+          let maxVisibility = 0;
 
-      for (let i = sectionElements.length - 1; i >= 0; i--) {
-        const section = sectionElements[i];
-        if (section.element) {
-          const rect = section.element.getBoundingClientRect();
-          const elementTop = rect.top + window.scrollY;
-          if (scrollPosition >= elementTop) {
-            setCurrentSection(section.id);
-            break;
-          }
-        }
+          sections.forEach((id) => {
+            const element = document.querySelector(`#${id}`);
+            if (element) {
+              const rect = element.getBoundingClientRect();
+              const elementTop = rect.top + window.scrollY;
+              const elementBottom = elementTop + rect.height;
+              
+              // Calculate how much of the section is visible
+              const visibleTop = Math.max(elementTop, window.scrollY);
+              const visibleBottom = Math.min(elementBottom, window.scrollY + window.innerHeight);
+              const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+              
+              if (scrollPosition >= elementTop && scrollPosition <= elementBottom) {
+                if (visibleHeight > maxVisibility) {
+                  maxVisibility = visibleHeight;
+                  currentSectionId = id;
+                }
+              }
+            }
+          });
+
+          setCurrentSection(currentSectionId);
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
     handleScroll(); // Initial check
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
   }, []);
 
-  // Keyboard navigation
+  // Keyboard navigation - supports ArrowLeft/Right and ArrowUp/Down
+  const isNavigating = useRef(false);
+  
   useEffect(() => {
     if (typeof window === "undefined") return;
     
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") {
+      // Prevent navigation if already navigating or if user is typing in an input
+      if (isNavigating.current) return;
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      
+      const currentIndex = sections.indexOf(currentSection);
+      if (currentIndex === -1) return;
+      
+      let targetIndex = currentIndex;
+      
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
         e.preventDefault();
-        const currentIndex = sections.indexOf(currentSection);
-        if (currentIndex === -1 || currentIndex === sections.length - 1) return;
-        const targetId = sections[currentIndex + 1];
-        const element = document.querySelector(`#${targetId}`);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (currentIndex < sections.length - 1) {
+          targetIndex = currentIndex + 1;
+        } else {
+          return; // Already at last section
         }
-      } else if (e.key === "ArrowLeft") {
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
         e.preventDefault();
-        const currentIndex = sections.indexOf(currentSection);
-        if (currentIndex === -1 || currentIndex === 0) return;
-        const targetId = sections[currentIndex - 1];
+        if (currentIndex > 0) {
+          targetIndex = currentIndex - 1;
+        } else {
+          return; // Already at first section
+        }
+      } else {
+        return; // Not a navigation key
+      }
+
+      if (targetIndex !== currentIndex) {
+        isNavigating.current = true;
+        const targetId = sections[targetIndex];
         const element = document.querySelector(`#${targetId}`);
+        
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
+          // Update current section immediately for better responsiveness
+          setCurrentSection(targetId);
+          
+          // Reset navigation lock after scroll completes
+          setTimeout(() => {
+            isNavigating.current = false;
+          }, 800);
+        } else {
+          isNavigating.current = false;
         }
       }
     };

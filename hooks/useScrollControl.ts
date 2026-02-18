@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { sections } from "@/lib/sections";
 
 export function useScrollControl() {
   const isScrolling = useRef(false);
@@ -14,21 +15,6 @@ export function useScrollControl() {
         e.preventDefault();
         return;
       }
-
-      const sections = [
-        "hero",
-        "about",
-        "what-we-do",
-        "event-lighting",
-        "event-lighting-gallery",
-        "architectural-lighting",
-        "architectural-lighting-gallery",
-        "kinetic-lighting",
-        "kinetic-lighting-gallery",
-        "immersive-installations",
-        "immersive-installations-gallery",
-        "contact",
-      ];
 
       const currentScroll = window.scrollY;
       const windowHeight = window.innerHeight;
