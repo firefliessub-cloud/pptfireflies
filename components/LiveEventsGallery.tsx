@@ -13,7 +13,7 @@ interface MediaItem {
   index: number;
 }
 
-const subcategories = ["Concert", "Corporate", "Wedding", "Social Event"];
+const subcategories = ["Concert", "Corporate", "Wedding", "Sport Event"];
 
 interface LiveEventsGalleryProps {
   projectNames?: {
@@ -36,9 +36,9 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
   const getMediaPaths = (subcategory: string, index: number) => {
     const itemNumber = index + 1;
     const subcategoryLower = subcategory.toLowerCase();
-    // Keep spaces for Social Event, use hyphens for others
-    const fileNameSubcategory = subcategoryLower === "social event" 
-      ? "social event" 
+    // Keep spaces for Sport Event, use hyphens for others
+    const fileNameSubcategory = subcategoryLower === "sport event" 
+      ? "sport event" 
       : subcategoryLower.replace(/\s+/g, '-');
     return {
       image: `/images/live-events-${fileNameSubcategory}-${itemNumber}.png`,
@@ -315,8 +315,8 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
                   </>
                 )}
                 
-                {/* Project Name Label - Bottom Center (hidden for Corporate, Wedding, and Social Event) */}
-                {selectedSubcategory !== "Corporate" && selectedSubcategory !== "Wedding" && selectedSubcategory !== "Social Event" && (
+                {/* Project Name Label - Bottom Center (hidden for Corporate, Wedding, and Sport Event) */}
+                {selectedSubcategory !== "Corporate" && selectedSubcategory !== "Wedding" && selectedSubcategory !== "Sport Event" && (
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-4 flex items-end">
                     <p className="text-white font-semibold text-sm sm:text-base text-center w-full">
                       {projectNames && projectNames[selectedSubcategory] && projectNames[selectedSubcategory][index]

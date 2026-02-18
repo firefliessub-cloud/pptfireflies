@@ -131,13 +131,13 @@ export default function Home() {
             "Wedding Project 5",
             "Wedding Project 6"
           ],
-          "Social Event": [
-            "Social Event Project 1",
-            "Social Event Project 2",
-            "Social Event Project 3",
-            "Social Event Project 4",
-            "Social Event Project 5",
-            "Social Event Project 6"
+          "Sport Event": [
+            "Sport Event Project 1",
+            "Sport Event Project 2",
+            "Sport Event Project 3",
+            "Sport Event Project 4",
+            "Sport Event Project 5",
+            "Sport Event Project 6"
           ]
         }}
       />
