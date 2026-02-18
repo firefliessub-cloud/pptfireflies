@@ -65,7 +65,7 @@ export default function Contact() {
                 <MapPin className="w-8 h-8 text-accent" />
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Location</h3>
-              <p className="text-gray-300 text-sm">Lodha Supremus, wadala, Mumbai 400037</p>
+              <p className="text-gray-300 text-sm">Lodha Supremus, Wadala, Mumbai 400037</p>
             </div>
           </div>
         </motion.div>

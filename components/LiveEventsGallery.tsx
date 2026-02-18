@@ -190,24 +190,24 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
     <section
       id="live-events-gallery"
       ref={ref}
-      className="h-screen py-16 px-4 sm:px-6 lg:px-8 bg-black relative overflow-hidden snap-start snap-always flex items-center justify-center"
+      className="min-h-screen py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-black relative overflow-y-auto snap-start snap-always flex flex-col items-center justify-start sm:justify-center"
     >
       {/* Subtle Background Glow */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/5 rounded-full blur-3xl"></div>
 
-      <div className="max-w-7xl mx-auto relative z-10 w-full">
+      <div className="max-w-7xl mx-auto relative z-10 w-full px-4 sm:px-6">
         {/* Subcategory Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex flex-wrap justify-center gap-4 mb-8"
+          className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 mb-6 sm:mb-8 w-full"
         >
           {subcategories.map((subcategory) => (
             <motion.button
               key={subcategory}
               onClick={() => setSelectedSubcategory(subcategory)}
-              className={`px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 rounded-full font-semibold text-xs sm:text-sm md:text-base lg:text-lg transition-all duration-300 whitespace-nowrap ${
                 selectedSubcategory === subcategory
                   ? "bg-accent text-black"
                   : "bg-gray-800 text-white hover:bg-gray-700 border border-gray-700"

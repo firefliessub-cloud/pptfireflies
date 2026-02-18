@@ -110,7 +110,7 @@ export default function Home() {
           Concert: [
             "Ap Dhillon Tour",
             "Prabhu Deva Tour",
-            "Messi Goat Tour",
+            "Lollapalooza India ",
             "Dabangg Tour",
             "DSP India Tour",
             "Sufi Tour Dhaka"
