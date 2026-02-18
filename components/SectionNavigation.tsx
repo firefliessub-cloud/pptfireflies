@@ -45,7 +45,7 @@ export default function SectionNavigation({ currentSectionId }: SectionNavigatio
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1, repeat: Infinity, repeatType: "reverse", duration: 1.5 }}
-                  className="absolute bottom-8 left-8 z-50 cursor-pointer"
+                  className="fixed bottom-8 left-8 z-[100] cursor-pointer"
           onClick={() => scrollToSection("prev")}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
@@ -76,7 +76,7 @@ export default function SectionNavigation({ currentSectionId }: SectionNavigatio
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1, repeat: Infinity, repeatType: "reverse", duration: 1.5 }}
-                  className="absolute bottom-8 right-8 z-50 cursor-pointer"
+                  className="fixed bottom-8 right-8 z-[100] cursor-pointer"
           onClick={() => scrollToSection("next")}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}

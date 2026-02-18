@@ -131,7 +131,9 @@ export default function Home() {
   return (
     <main className="relative snap-y snap-mandatory overflow-y-scroll h-screen w-full bg-black">
       <Navigation />
-      <Hero />
+      <div className="relative">
+        <Hero />
+      </div>
       <About />
       <WhatWeDo />
       <ServiceHeader
