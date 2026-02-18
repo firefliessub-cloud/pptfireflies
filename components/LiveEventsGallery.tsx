@@ -199,7 +199,7 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
         {/* Subcategory Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="flex flex-wrap justify-center gap-4 mb-8"
         >
@@ -334,7 +334,7 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
         {/* View More Button */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
           className="flex justify-center"
         >

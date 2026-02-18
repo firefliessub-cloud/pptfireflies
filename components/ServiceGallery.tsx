@@ -136,7 +136,7 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
         {/* Media Gallery Grid - Supports both images and videos */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
         >
@@ -159,7 +159,7 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
               <motion.div
                 key={index}
                 initial={{ opacity: 0, scale: 0.9 }}
-                animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+                animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
                 className="relative aspect-square overflow-hidden rounded-xl group cursor-pointer"
                 data-media-index={index}
@@ -249,7 +249,7 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
         {/* View More Button */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
           className="flex justify-center"
         >
