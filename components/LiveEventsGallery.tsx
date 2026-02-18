@@ -13,7 +13,7 @@ interface MediaItem {
   index: number;
 }
 
-const subcategories = ["Concert", "Corporate", "Wedding", "Sport Event"];
+const subcategories = ["Concert", "Corporate", "Wedding", "Sport Event", "Special Event"];
 
 interface LiveEventsGalleryProps {
   projectNames?: {
@@ -36,9 +36,9 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
   const getMediaPaths = (subcategory: string, index: number) => {
     const itemNumber = index + 1;
     const subcategoryLower = subcategory.toLowerCase();
-    // Keep spaces for Sport Event, use hyphens for others
-    const fileNameSubcategory = subcategoryLower === "sport event" 
-      ? "sport event" 
+    // Keep spaces for Sport Event and Special Event, use hyphens for others
+    const fileNameSubcategory = subcategoryLower === "sport event" || subcategoryLower === "special event"
+      ? subcategoryLower
       : subcategoryLower.replace(/\s+/g, '-');
     return {
       image: `/images/live-events-${fileNameSubcategory}-${itemNumber}.png`,
