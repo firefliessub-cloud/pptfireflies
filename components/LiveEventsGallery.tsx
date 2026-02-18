@@ -315,8 +315,8 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
                   </>
                 )}
                 
-                {/* Project Name Label - Bottom Center (hidden for Corporate, Wedding, and Sport Event) */}
-                {selectedSubcategory !== "Corporate" && selectedSubcategory !== "Wedding" && selectedSubcategory !== "Sport Event" && (
+                {/* Project Name Label - Bottom Center (hidden for Corporate, Wedding, Sport Event, and Special Event) */}
+                {selectedSubcategory !== "Corporate" && selectedSubcategory !== "Wedding" && selectedSubcategory !== "Sport Event" && selectedSubcategory !== "Special Event" && (
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-4 flex items-end">
                     <p className="text-white font-semibold text-sm sm:text-base text-center w-full">
                       {projectNames && projectNames[selectedSubcategory] && projectNames[selectedSubcategory][index]
