@@ -18,7 +18,6 @@ const sections = [
   "what-we-do",
   "live-events",
   "live-events-gallery",
-  "client-logos",
   "architectural-lighting",
   "architectural-lighting-gallery",
   "kinetic-lighting",
@@ -27,6 +26,7 @@ const sections = [
   "immersive-installations-gallery",
   "pre-viz-studio",
   "pre-viz-studio-gallery",
+  "client-logos",
   "contact",
 ];
 
@@ -141,7 +141,6 @@ export default function Home() {
           ]
         }}
       />
-      <ClientLogos />
       <ServiceHeader
         id="architectural-lighting"
         title="Architectural Lighting"
@@ -189,6 +188,7 @@ export default function Home() {
         id="pre-viz-studio"
         title="Pre Viz Studio"
       />
+      <ClientLogos />
       <Contact />
     </main>
   );
