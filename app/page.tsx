@@ -95,7 +95,7 @@ export default function Home() {
   }, [currentSection]);
 
   return (
-    <main className="relative snap-y snap-mandatory overflow-y-scroll h-screen w-full bg-black" style={{ backgroundColor: '#000000' }}>
+    <main className="relative snap-y snap-mandatory min-h-screen w-full bg-black" style={{ backgroundColor: '#000000' }}>
       <Navigation />
       <Hero />
       <About />
