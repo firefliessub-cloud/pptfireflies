@@ -26,6 +26,7 @@ const clientLogos = [
   { name: "Client 14", logo: "/images/Clinets/client-14.png" },
   { name: "Client 15", logo: "/images/Clinets/client-15.png" },
   { name: "Client 16", logo: "/images/Clinets/client-16.png" },
+  { name: "Client 17", logo: "/images/Clinets/client-17.png" },
 ];
 
 // Split logos into two groups: first 8 for first row, last 8 for second row

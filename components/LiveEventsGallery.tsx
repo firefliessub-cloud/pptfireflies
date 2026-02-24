@@ -13,7 +13,15 @@ interface MediaItem {
   index: number;
 }
 
-const subcategories = ["Concert", "Corporate", "Wedding", "Sport Event", "Special Event"];
+const subcategories = [
+  "Music concerts",
+  "Corporate launches",
+  "Weddings / Social",
+  "Sport Event",
+  "Special Event",
+  "Team Projects",
+  "Theaterical productions",
+];
 
 interface LiveEventsGalleryProps {
   projectNames?: {
@@ -25,21 +33,29 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string>("Concert");
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>("Music concerts");
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   // Cache media items per category to avoid reloading
   const mediaCache = useRef<Record<string, MediaItem[]>>({});
   const [imageLoadStates, setImageLoadStates] = useState<Record<string, boolean>>({});
 
+  // Map UI label -> file name key so existing images still work
+  const subcategoryFileKey: Record<string, string> = {
+    "Music concerts": "concert", // uses live-events-concert-1.png, etc.
+    "Corporate launches": "corporate",
+    "Weddings / Social": "wedding",
+    "Sport Event": "sport event",
+    "Special Event": "special event",
+    "Team Projects": "team-projects",
+    "Theaterical productions": "theaterical-productions",
+  };
+
   // Helper to get file paths for a subcategory and slot
   const getMediaPaths = (subcategory: string, index: number) => {
     const itemNumber = index + 1;
-    const subcategoryLower = subcategory.toLowerCase();
-    // Keep spaces for Sport Event and Special Event, use hyphens for others
-    const fileNameSubcategory = subcategoryLower === "sport event" || subcategoryLower === "special event"
-      ? subcategoryLower
-      : subcategoryLower.replace(/\s+/g, '-');
+    const fileNameSubcategory =
+      subcategoryFileKey[subcategory] ?? subcategory.toLowerCase().replace(/\s+/g, "-");
     return {
       image: `/images/live-events-${fileNameSubcategory}-${itemNumber}.png`,
       imageJpg: `/images/live-events-${fileNameSubcategory}-${itemNumber}.jpg`,
@@ -315,8 +331,11 @@ export default function LiveEventsGallery({ projectNames }: LiveEventsGalleryPro
                   </>
                 )}
                 
-                {/* Project Name Label - Bottom Center (hidden for Corporate, Wedding, Sport Event, and Special Event) */}
-                {selectedSubcategory !== "Corporate" && selectedSubcategory !== "Wedding" && selectedSubcategory !== "Sport Event" && selectedSubcategory !== "Special Event" && (
+                {/* Project Name Label - Bottom Center (hidden for Corporate launches, Weddings / Social, Sport Event, and Special Event) */}
+                {selectedSubcategory !== "Corporate launches" &&
+                  selectedSubcategory !== "Weddings / Social" &&
+                  selectedSubcategory !== "Sport Event" &&
+                  selectedSubcategory !== "Special Event" && (
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-4 flex items-end">
                     <p className="text-white font-semibold text-sm sm:text-base text-center w-full">
                       {projectNames && projectNames[selectedSubcategory] && projectNames[selectedSubcategory][index]

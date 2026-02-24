@@ -107,7 +107,7 @@ export default function Home() {
       />
       <LiveEventsGallery
         projectNames={{
-          Concert: [
+          "Music concerts": [
             "Ap Dhillon Tour",
             "Prabhu Deva Tour",
             "Lollapalooza India ",
@@ -115,15 +115,15 @@ export default function Home() {
             "DSP India Tour",
             "Sufi Tour Dhaka"
           ],
-          Corporate: [
-            "Corporate Project 1",
-            "Corporate Project 2",
-            "Corporate Project 3",
-            "Corporate Project 4",
-            "Corporate Project 5",
-            "Corporate Project 6"
+          "Corporate launches": [
+            "Corporate Launch 1",
+            "Corporate Launch 2",
+            "Corporate Launch 3",
+            "Corporate Launch 4",
+            "Corporate Launch 5",
+            "Corporate Launch 6"
           ],
-          Wedding: [
+          "Weddings / Social": [
             "Ambani Wedding",
             "Udaipur Wedding",
             "Mehrangarh Wedding",
@@ -146,6 +146,22 @@ export default function Home() {
             "Special Event Project 4",
             "Special Event Project 5",
             "Special Event Project 6"
+          ],
+          "Team Projects": [
+            "Tata Sierra Launch",
+            "Matrix Fight Night 16",
+            "Fast & Fablous : Catwalk",
+            "Youtube Brandcast",
+            "Palm Expo 2025",
+            "Ap Dhillon Tour"
+          ],
+          "Theaterical productions": [
+            "Theaterical Production 1",
+            "Theaterical Production 2",
+            "Theaterical Production 3",
+            "Theaterical Production 4",
+            "Theaterical Production 5",
+            "Theaterical Production 6"
           ]
         }}
       />
@@ -162,7 +178,7 @@ export default function Home() {
           "Bandra Worli Sea Link",
           "Police Headquarter - Mumbai",
           "Red Fort - New Delhi ",
-          "Chabutra - New Delhi",
+          "Red Fort - New Delhi",
           "Victoria Memorial"
         ]}
       />

@@ -212,14 +212,28 @@ export default function ServiceGallery({ id, title, projectNames }: ServiceGalle
                       priority={index < 3}
                       loading={index < 3 ? "eager" : "lazy"}
                       onError={(e) => {
-                        // Try .jpg if .png doesn't exist
                         const target = e.target as HTMLImageElement;
-                        if (target.src.includes(".png") && !target.src.includes(".jpg")) {
-                          // Try JPG version
-                          const jpgSrc = target.src.replace(".png", ".jpg");
-                          target.src = jpgSrc;
+                        const src = target.src;
+
+                        // 1) PNG -> .gif (lowercase)
+                        if (src.endsWith(".png")) {
+                          target.src = src.replace(".png", ".gif");
+                          return;
                         }
-                        // If both image formats fail, video check will happen on video error
+
+                        // 2) .gif (lowercase) -> .GIF (uppercase) to support files like kinetic-lighting-5.GIF
+                        if (src.endsWith(".gif")) {
+                          target.src = src.replace(".gif", ".GIF");
+                          return;
+                        }
+
+                        // 3) .GIF -> .jpg as final fallback
+                        if (src.endsWith(".GIF")) {
+                          target.src = src.replace(".GIF", ".jpg");
+                          return;
+                        }
+
+                        // If all formats fail, the slot will simply stay empty (no crash)
                       }}
                       onLoad={() => {
                         // Image loaded successfully - ensure type is set
